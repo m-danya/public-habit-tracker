@@ -61,5 +61,4 @@ class Event(BaseModel):
 
 
 with db:
-    db.drop_tables([User, Habit, Event])  # FIXME: only for initial development
-    db.create_tables([User, Habit, Event])
+    db.create_tables([User, Habit, Answer, Event])

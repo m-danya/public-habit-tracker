@@ -18,11 +18,13 @@ async def start(nav: Navigator):
             full_name=nav.message.from_user.full_name,
         )
         logger.info(f"New user {user}")
-        await nav.send_message(Texts.onboarding_1_text, keyboard=Keyboards.onboarding_1)
     except IntegrityError as e:
-        await nav.send_message(Texts.welcome_back)
+        # user is already in database, it's ok, just start onboarding as usual
+        pass
     except:
         logger.exception("Couldn't create user")
+        return
+    await nav.send_message(Texts.onboarding_1_text, keyboard=Keyboards.onboarding_1)
 
 
 @dp.message_handler(match_text(Texts.onboarding_1_next_button))

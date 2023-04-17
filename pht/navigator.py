@@ -11,12 +11,16 @@ class Navigator:
         self.user_id = message.from_user.id
 
     async def send_message(self, text, *args, keyboard=None, **kwargs):
-        chars_to_escape = "!<>"
+        # escape symbols that are special in Markdown
+        chars_to_escape = "!<>.-()+"
         for char in chars_to_escape:
             text = text.replace(char, "\\" + char)
         if keyboard:
             kwargs["reply_markup"] = keyboard
         return await bot.send_message(self.user_id, text, *args, **kwargs)
+
+    async def redirect(self, another_route_function):
+        return await another_route_function(self.message, self.state)
 
 
 def with_navigator(f):

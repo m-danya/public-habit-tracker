@@ -6,6 +6,7 @@ from pht.bot import dp
 import pht.models  # noqa
 
 import pht.routes.onboarding  # noqa
+import pht.routes.my_habits  # noqa
 import pht.routes.menu  # noqa, must be imported by the last of routes
 
 # remove default logger and add a nice one

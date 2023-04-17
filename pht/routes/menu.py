@@ -8,10 +8,14 @@ from pht.utils import match_text
 
 @dp.message_handler(match_text(Texts.question_button))
 @with_navigator
-async def answer_how(nav: Navigator):
-    await nav.send_message("Пока не знаю! *Markdown test*")
+async def what_to_do(nav: Navigator):
+    from pht.routes.onboarding import start
+
+    await nav.redirect(start)
 
 
 @dp.message_handler(state="*")
-async def _any(message: Message):
-    await bot.send_message(message.chat.id, "hi", reply_markup=Keyboards.menu)
+@with_navigator
+async def main_menu(nav: Navigator):
+    await nav.state.set_state()
+    await nav.send_message(Texts.main_menu_text, reply_markup=Keyboards.menu)
