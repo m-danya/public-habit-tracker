@@ -21,7 +21,15 @@ async def my_habits_go_back(nav: Navigator):
     await nav.redirect(main_menu)
 
 
+@dp.message_handler(match_text(Texts.add_habit_button), state=States.my_habits)
+@with_navigator
+async def add_habit_from_my_habits(nav: Navigator):
+    from pht.routes.add_new_habit import add_new_habit_intro_and_ask_for_name
+
+    await nav.redirect(add_new_habit_intro_and_ask_for_name)
+
+
 @dp.message_handler(state=States.my_habits)
 @with_navigator
 async def invalid_input_my_habits(nav: Navigator):
-    await nav.send_message(Texts.invalid_input, keyboard=Keyboards.my_habits)
+    await nav.send_message(Texts.invalid_buttons_input, keyboard=Keyboards.my_habits)

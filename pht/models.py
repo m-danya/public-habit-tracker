@@ -42,8 +42,14 @@ class Habit(BaseModel):
     owner = ForeignKeyField(User, backref="habits")
     name = CharField()
     answer_type = CharField()  # 'bool' or 'integer'
-    regularity = JSONField()
+    regularity = IntegerField()  # 3 (times a week)
     created_at = DateTimeField(default=ts_default)
+
+    def __repr__(self):
+        return f"<Habit: {self.name}, {self.answer_type}, {self.regularity}, owner: {self.owner}>"
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class Answer(BaseModel):

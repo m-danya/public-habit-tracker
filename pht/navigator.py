@@ -2,6 +2,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
 from pht.bot import bot
+from pht.models import User
 
 
 class Navigator:
@@ -9,6 +10,7 @@ class Navigator:
         self.message = message
         self.state = state
         self.user_id = message.from_user.id
+        self.user = User.get_or_none(User.id == self.user_id)
 
     async def send_message(self, text, *args, keyboard=None, **kwargs):
         # escape symbols that are special in Markdown
