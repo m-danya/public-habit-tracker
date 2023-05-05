@@ -2,7 +2,7 @@ import sys
 
 from aiogram import executor
 from loguru import logger
-from pht.bot import dp
+from pht.bot import dp, scheduler
 import pht.models  # noqa
 
 import pht.routes.commands  # noqa, must be at the beginning
@@ -17,4 +17,5 @@ logger.remove()
 logger.add(sys.stdout, colorize=True, backtrace=True, diagnose=True)
 
 if __name__ == "__main__":
+    scheduler.start()
     executor.start_polling(dp, skip_updates=True)

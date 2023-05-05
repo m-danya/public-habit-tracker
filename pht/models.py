@@ -1,10 +1,14 @@
 from datetime import datetime
+from typing import Optional
 
+from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 from peewee import *
 from playhouse.pool import PooledPostgresqlExtDatabase
 from playhouse.postgres_ext import JSONField
 
-from pht.bot import config
+from pht.bot import config, scheduler
+from pht.data import SCHEDULER_FORGET_IF_MISSED_SECONDS
 
 db = PooledPostgresqlExtDatabase(
     config.DB_NAME,
@@ -25,11 +29,12 @@ class BaseModel(Model):
 
 
 class User(BaseModel):
-    username = CharField()
-    full_name = CharField()
-    created_at = DateTimeField(default=ts_default)
-    rating_privacy = CharField(default="private")  # 'public'
-    time_to_ask = CharField(default="22:00")  # '22:00'
+    username: str = CharField()
+    full_name: str = CharField()
+    created_at: datetime = DateTimeField(default=ts_default)
+    rating_privacy: str = CharField(default="private")  # 'public'
+    time_to_ask: str = CharField(default="22:00")  # '22:00'
+    scheduler_job_id: Optional[str] = CharField()
 
     def __repr__(self):
         return f"<User: {self.username} / {self.full_name}>"
@@ -37,13 +42,50 @@ class User(BaseModel):
     def __str__(self):
         return self.__repr__()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.set_up_scheduler_job()
+
+    def _get_cron_trigger(self):
+        hours, minutes = self.time_to_ask.split(":")
+        # FIXME: development/debugging purposes only
+        return IntervalTrigger(seconds=10)
+        # every day at hh:mm
+        return CronTrigger(hour=hours, minute=minutes)
+
+    def set_up_scheduler_job(self):
+        scheduler_job_id = f"user_{self.id}_scheduler"
+        from pht.scheduler_jobs import ask_about_day_job
+
+        scheduler.add_job(
+            ask_about_day_job,
+            trigger=self._get_cron_trigger(),
+            args=(self,),
+            misfire_grace_time=SCHEDULER_FORGET_IF_MISSED_SECONDS,
+            id=scheduler_job_id,
+            replace_existing=True,
+        )
+        self.scheduler_job_id = scheduler_job_id
+
+    def reschedule_scheduler_job(self):
+        """
+        This method should be called when `User.time_to_ask` is changed
+        """
+        scheduler.reschedule_job(
+            self.scheduler_job_id, trigger=self._get_cron_trigger()
+        )
+
+    def remove_scheduler_job(self):
+        if self.scheduler_job_id:
+            scheduler.remove_job(self.scheduler_job_id)
+
 
 class Habit(BaseModel):
-    owner = ForeignKeyField(User, backref="habits")
-    name = CharField()
-    answer_type = CharField()  # 'bool' or 'integer'
-    regularity = IntegerField()  # 3 (times a week)
-    created_at = DateTimeField(default=ts_default)
+    owner: User = ForeignKeyField(User, backref="habits")
+    name: str = CharField()
+    answer_type: str = CharField()  # 'bool' or 'integer'
+    regularity: str = IntegerField()  # 3 (times a week)
+    created_at: datetime = DateTimeField(default=ts_default)
 
     def __repr__(self):
         return f"<Habit: {self.name}, {self.answer_type}, {self.regularity}, owner: {self.owner}>"
@@ -53,17 +95,17 @@ class Habit(BaseModel):
 
 
 class Answer(BaseModel):
-    habit = ForeignKeyField(Habit, backref="answers")
-    content = IntegerField()
-    description = CharField()  # "valid_reason" or other explanation
-    date = DateTimeField(default=ts_default)
-    changed_at = DateTimeField(default=ts_default)
+    habit: Habit = ForeignKeyField(Habit, backref="answers")
+    content: int = IntegerField()
+    description: str = CharField()  # "valid_reason" or other explanation
+    date: datetime = DateTimeField(default=ts_default)
+    changed_at: datetime = DateTimeField(default=ts_default)
 
 
 class Event(BaseModel):
-    ts = DateTimeField(default=ts_default)
-    type = CharField()
-    data = JSONField()
+    ts: datetime = DateTimeField(default=ts_default)
+    type: str = CharField()
+    data: dict = JSONField()
 
 
 with db:

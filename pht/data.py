@@ -1,6 +1,9 @@
 from pht.utils import gen_keyboard
 
 
+SCHEDULER_FORGET_IF_MISSED_SECONDS = 60 * 120
+
+
 class Texts:
     main_menu_text = "👋 Ты в главном меню"
     my_habits_button = "🦾 Мои привычки"
@@ -48,6 +51,10 @@ class Texts:
             "- *Не есть сладкое после ужина*: каждый день",
         ]
         return header + "\n\n" + "\n".join(habits)
+
+    @staticmethod
+    def ask_about_day(n):
+        return f"""Привет! <цепочка вопросов про n={n} привычек>"""
 
     add_new_habit_intro_text = (
         "Отлично! Я спрошу тебя о нескольких вещах:\n\n"
