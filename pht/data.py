@@ -43,6 +43,9 @@ class Texts:
         "Что\\-то пошло не так, пожалуйста, напиши об этом @m\\_danya\\_jpg"
     )
 
+    time_setting_button = "🕒 Время опроса"
+    rating_setting_button = "🏆 Участие в рейтинге"
+
     @staticmethod
     def my_habits_text(habits: ...):
         header = "*Твои привычки:*"
@@ -51,6 +54,18 @@ class Texts:
             "- *Не есть сладкое после ужина*: каждый день",
         ]
         return header + "\n\n" + "\n".join(habits)
+
+    @staticmethod
+    def settings_text(settings: ...):
+        header = "*Твои настройки:*"
+
+        # TODO: print the poll time and rating sharing based on user prev
+        # settings
+        settings = [
+            "- *Время опроса*: 22:00",
+            "- *Участие в публичном рейтинге*: да"
+        ]
+        return header + "\n\n" + "\n".join(settings)
 
     @staticmethod
     def ask_about_day(n):
@@ -105,6 +120,12 @@ class Keyboards:
 
     no_buttons = gen_keyboard(None)
 
+    settings_menu = gen_keyboard(
+        [
+            [Texts.time_setting_button, Texts.rating_setting_button],
+            [Texts.back_button]
+        ]
+    )
 
 class States:
     my_habits = "my_habits"
@@ -112,3 +133,7 @@ class States:
     add_new_habit_waiting_for_name = "add_new_habit_waiting_for_name"
     add_new_habit_waiting_for_regularity = "add_new_habit_waiting_for_regularity"
     add_new_habit_waiting_for_type = "add_new_habit_waiting_for_type"
+
+    settings = "settings"
+    set_poll_time = "set_poll_time"
+    set_rating_share = "set_rating_share"
