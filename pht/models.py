@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import time, datetime, timezone
 from typing import Optional
 
 from apscheduler.triggers.cron import CronTrigger
@@ -33,7 +33,8 @@ class User(BaseModel):
     full_name: str = CharField()
     created_at: datetime = DateTimeField(default=ts_default)
     rating_privacy: str = CharField(default="private")  # 'public'
-    time_to_ask: str = CharField(default="22:00")  # '22:00'
+    # TODO: set utc+0 timezone.
+    time_to_ask: time = time(hour=19, minute=0)  # '22:00' in UTC+3:00
     scheduler_job_id: Optional[str] = CharField()
 
     def __repr__(self):
@@ -47,11 +48,10 @@ class User(BaseModel):
         self.set_up_scheduler_job()
 
     def _get_cron_trigger(self):
-        hours, minutes = self.time_to_ask.split(":")
         # FIXME: development/debugging purposes only
-        return IntervalTrigger(seconds=10)
+        #return IntervalTrigger(seconds=10)
         # every day at hh:mm
-        return CronTrigger(hour=hours, minute=minutes)
+        return CronTrigger(hour=self.time_to_ask.hour, minute=self.time_to_ask.minute)
 
     def set_up_scheduler_job(self):
         scheduler_job_id = f"user_{self.id}_scheduler"
