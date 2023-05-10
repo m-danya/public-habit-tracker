@@ -23,16 +23,15 @@ async def set_time(nav: Navigator):
 @with_navigator
 async def check_time(nav: Navigator):
     try:
-        time = datetime.strptime(nav.message.text, "%H:%M").time()
+        time = (datetime.strptime(nav.message.text, "%H:%M") - timedelta(hours=3)).time()
     except ValueError:
         await nav.send_message(Texts.invalid_text_input)
         return
 
-    user = User.get(User.username == nav.message.from_user.username)
-    # FIXME: convert to utc+0
-    user.time_to_ask = time
-    user.save()
+    nav.user.time_to_ask = time
+    nav.user.save()
+    nav.user.reschedule_scheduler_job()
 
-    logger.info(f"Updated time_to_ask to {time} {user}")
+    logger.info(f"Updated time_to_ask to {nav.user.time_to_ask} {nav.user}")
 
     await nav.redirect(settings)
