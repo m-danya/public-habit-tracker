@@ -33,9 +33,9 @@ class User(BaseModel):
     username: str = CharField()
     full_name: str = CharField()
     created_at: datetime = DateTimeField(default=ts_default)
-    rating_privacy: str = CharField(default="private")  # 'public'
+    rating_publicity: bool = BooleanField(default=True)  # 'public'
     time_to_ask: time = TimeField(default=time(hour=19, minute=0))  # '22:00' in UTC+3:00
-    scheduler_job_id: Optional[str] = CharField()
+    scheduler_job_id: Optional[str] = CharField(default='')
 
     def __repr__(self):
         return f"<User: {self.username} / {self.full_name}>"
@@ -54,6 +54,7 @@ class User(BaseModel):
             )
 
     def set_up_scheduler_job(self):
+        scheduler_job_id = f"user_{self.id}_scheduler"
         from pht.scheduler_jobs import ask_about_day_job
 
         scheduler.add_job(
@@ -61,12 +62,14 @@ class User(BaseModel):
             trigger=self._get_cron_trigger(),
             args=(self,),
             misfire_grace_time=SCHEDULER_FORGET_IF_MISSED_SECONDS,
-            id=self.scheduler_job_id,
+            id=scheduler_job_id,
             replace_existing=True,
         )
 
-        logger.debug(f"Job {self.scheduler_job_id} set up")
-        logger.debug(f"{self.time_to_ask}")
+        self.scheduler_job_id = scheduler_job_id
+        self.save()
+
+        logger.debug(f"Job {self.scheduler_job_id} set up to {self.time_to_ask}")
 
     def reschedule_scheduler_job(self):
         """
@@ -76,8 +79,7 @@ class User(BaseModel):
             self.scheduler_job_id, trigger=self._get_cron_trigger()
         )
 
-        logger.debug(f"{self.scheduler_job_id} was rescheduled")
-        logger.debug(f"{self.time_to_ask}")
+        logger.debug(f"{self.scheduler_job_id} was rescheduled to {self.time_to_ask}")
 
 
     def remove_scheduler_job(self):

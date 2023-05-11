@@ -23,12 +23,11 @@ async def start(nav: Navigator):
             id=nav.message.from_user.id,
             username=nav.message.from_user.username,
             full_name=nav.message.from_user.full_name,
-            scheduler_job_id=f"user_{nav.message.from_user.id}_scheduler"
         )
         # __init__ is called every time when a model instance is got, so
         # it makes sense to call set_up_scheduler here only once.
         user.set_up_scheduler_job()
-        logger.info(f"New user {user}, job {user.scheduler_job_id}")
+        logger.info(f"New user {user}")
     except IntegrityError as e:
         # user is already in database, it's ok, just start onboarding as usual
         pass
