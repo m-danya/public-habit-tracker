@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import time, datetime, timezone
+from loguru import logger
 from typing import Optional
 
 from apscheduler.triggers.cron import CronTrigger
@@ -32,9 +33,11 @@ class User(BaseModel):
     username: str = CharField()
     full_name: str = CharField()
     created_at: datetime = DateTimeField(default=ts_default)
-    rating_privacy: str = CharField(default="private")  # 'public'
-    time_to_ask: str = CharField(default="22:00")  # '22:00'
-    scheduler_job_id: Optional[str] = CharField()
+    rating_publicity: bool = BooleanField(default=True)  # 'public'
+    time_to_ask: time = TimeField(
+        default=time(hour=19, minute=0)
+    )  # '22:00' in UTC+3:00
+    scheduler_job_id: Optional[str] = CharField(default="")
 
     def __repr__(self):
         return f"<User: {self.username} / {self.full_name}>"
@@ -42,16 +45,13 @@ class User(BaseModel):
     def __str__(self):
         return self.__repr__()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.set_up_scheduler_job()
-
     def _get_cron_trigger(self):
-        hours, minutes = self.time_to_ask.split(":")
         # FIXME: development/debugging purposes only
-        return IntervalTrigger(seconds=10)
+        # return IntervalTrigger(seconds=10)
         # every day at hh:mm
-        return CronTrigger(hour=hours, minute=minutes)
+        return CronTrigger(
+            hour=self.time_to_ask.hour, minute=self.time_to_ask.minute, timezone="utc"
+        )
 
     def set_up_scheduler_job(self):
         scheduler_job_id = f"user_{self.id}_scheduler"
@@ -65,7 +65,11 @@ class User(BaseModel):
             id=scheduler_job_id,
             replace_existing=True,
         )
+
         self.scheduler_job_id = scheduler_job_id
+        self.save()
+
+        logger.debug(f"Job {self.scheduler_job_id} set up to {self.time_to_ask}")
 
     def reschedule_scheduler_job(self):
         """
@@ -75,13 +79,15 @@ class User(BaseModel):
             self.scheduler_job_id, trigger=self._get_cron_trigger()
         )
 
+        logger.debug(f"{self.scheduler_job_id} was rescheduled to {self.time_to_ask}")
+
     def remove_scheduler_job(self):
         if self.scheduler_job_id:
             scheduler.remove_job(self.scheduler_job_id)
 
 
 class Habit(BaseModel):
-    owner: User = ForeignKeyField(User, backref="habits")
+    owner: User = ForeignKeyField(User, backref="habits", on_delete="CASCADE")
     name: str = CharField()
     answer_type: str = CharField()  # 'bool' or 'integer'
     regularity: str = IntegerField()  # 3 (times a week)

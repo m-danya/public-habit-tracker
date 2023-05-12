@@ -1,4 +1,6 @@
-from pht.utils import gen_keyboard
+from datetime import date, datetime, time, timedelta
+
+from pht.utils import gen_keyboard, to_msc_time
 
 
 SCHEDULER_FORGET_IF_MISSED_SECONDS = 60 * 120
@@ -43,6 +45,12 @@ class Texts:
         "Что\\-то пошло не так, пожалуйста, напиши об этом @m\\_danya\\_jpg"
     )
 
+    time_setting_button = "🕒 Время опроса"
+    rating_setting_button = "🏆 Участие в рейтинге"
+
+    set_time_text = "⏳ Введи время в часовом поясе UTC+3:00 (по Москве) в формате HH:MM"
+    set_rating_text = "🏅 Ты будешь участвовать в публичном рейтинге?"
+
     @staticmethod
     def my_habits_text(habits: ...):
         header = "*Твои привычки:*"
@@ -51,6 +59,19 @@ class Texts:
             "- *Не есть сладкое после ужина*: каждый день",
         ]
         return header + "\n\n" + "\n".join(habits)
+
+    @staticmethod
+    def settings_text(time_to_ask, rating_publicity):
+        header = "*Твои настройки:*"
+
+        time_str = f"{time.strftime(to_msc_time(time_to_ask), '%H:%M')}"
+        rating_str = "да" if rating_publicity else "нет"
+
+        settings = [
+            f"- *Время опроса*: {time_str} (UTC+3:00)",
+            f"- *Участие в публичном рейтинге*: {rating_str}",
+        ]
+        return header + "\n\n" + "\n".join(settings)
 
     @staticmethod
     def ask_about_day(n):
@@ -80,6 +101,9 @@ class Texts:
     add_new_habit_button_minutes = "⏰ количество минут в день"
     add_new_habit_success = "🎉 Привычка добавлена!"
 
+    yes_button = "👍 Да"
+    no_button = "👎 Нет"
+
 
 class Keyboards:
     menu = gen_keyboard(
@@ -105,6 +129,12 @@ class Keyboards:
 
     no_buttons = gen_keyboard(None)
 
+    settings_menu = gen_keyboard(
+        [[Texts.time_setting_button, Texts.rating_setting_button], [Texts.back_button]]
+    )
+
+    yes_no_menu = gen_keyboard([[Texts.yes_button, Texts.no_button]])
+
 
 class States:
     my_habits = "my_habits"
@@ -112,3 +142,7 @@ class States:
     add_new_habit_waiting_for_name = "add_new_habit_waiting_for_name"
     add_new_habit_waiting_for_regularity = "add_new_habit_waiting_for_regularity"
     add_new_habit_waiting_for_type = "add_new_habit_waiting_for_type"
+
+    settings = "settings"
+    settings_waiting_for_time = "settings_waiting_for_time"
+    settings_waiting_for_rating = "settings_waiting_for_rating"
