@@ -32,10 +32,8 @@ def match_text(text):
 
 
 def to_utc_time(time_msc):
-    return (datetime.combine(date.today(), time_msc) -
-            timedelta(hours=3)).time()
+    return (datetime.combine(date.today(), time_msc) - timedelta(hours=3)).time()
 
 
 def to_msc_time(time_utc):
-    return (datetime.combine(date.today(), time_utc) +
-            timedelta(hours=3)).time()
+    return (datetime.combine(date.today(), time_utc) + timedelta(hours=3)).time()

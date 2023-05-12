@@ -48,7 +48,7 @@ class Texts:
     time_setting_button = "🕒 Время опроса"
     rating_setting_button = "🏆 Участие в рейтинге"
 
-    set_time_text = "⏳ Введи время в часовом поясе UTC+3:00 в формате HH:MM"
+    set_time_text = "⏳ Введи время в часовом поясе UTC+3:00 (по Москве) в формате HH:MM"
     set_rating_text = "🏅 Ты будешь участвовать в публичном рейтинге?"
 
     @staticmethod
@@ -65,11 +65,11 @@ class Texts:
         header = "*Твои настройки:*"
 
         time_str = f"{time.strftime(to_msc_time(time_to_ask), '%H:%M')}"
-        rating_str = f"{'да' if rating_publicity else 'нет'}"
+        rating_str = "да" if rating_publicity else "нет"
 
         settings = [
             f"- *Время опроса*: {time_str} (UTC+3:00)",
-            f"- *Участие в публичном рейтинге*: {rating_str}"
+            f"- *Участие в публичном рейтинге*: {rating_str}",
         ]
         return header + "\n\n" + "\n".join(settings)
 
@@ -104,6 +104,7 @@ class Texts:
     yes_button = "👍 Да"
     no_button = "👎 Нет"
 
+
 class Keyboards:
     menu = gen_keyboard(
         [
@@ -129,17 +130,11 @@ class Keyboards:
     no_buttons = gen_keyboard(None)
 
     settings_menu = gen_keyboard(
-        [
-            [Texts.time_setting_button, Texts.rating_setting_button],
-            [Texts.back_button]
-        ]
+        [[Texts.time_setting_button, Texts.rating_setting_button], [Texts.back_button]]
     )
 
-    yes_no_menu = gen_keyboard(
-        [
-            [Texts.yes_button, Texts.no_button]
-        ]
-    )
+    yes_no_menu = gen_keyboard([[Texts.yes_button, Texts.no_button]])
+
 
 class States:
     my_habits = "my_habits"

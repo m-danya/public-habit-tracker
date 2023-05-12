@@ -34,8 +34,10 @@ class User(BaseModel):
     full_name: str = CharField()
     created_at: datetime = DateTimeField(default=ts_default)
     rating_publicity: bool = BooleanField(default=True)  # 'public'
-    time_to_ask: time = TimeField(default=time(hour=19, minute=0))  # '22:00' in UTC+3:00
-    scheduler_job_id: Optional[str] = CharField(default='')
+    time_to_ask: time = TimeField(
+        default=time(hour=19, minute=0)
+    )  # '22:00' in UTC+3:00
+    scheduler_job_id: Optional[str] = CharField(default="")
 
     def __repr__(self):
         return f"<User: {self.username} / {self.full_name}>"
@@ -45,13 +47,11 @@ class User(BaseModel):
 
     def _get_cron_trigger(self):
         # FIXME: development/debugging purposes only
-        #return IntervalTrigger(seconds=10)
+        # return IntervalTrigger(seconds=10)
         # every day at hh:mm
         return CronTrigger(
-                hour=self.time_to_ask.hour,
-                minute=self.time_to_ask.minute,
-                timezone='utc'
-            )
+            hour=self.time_to_ask.hour, minute=self.time_to_ask.minute, timezone="utc"
+        )
 
     def set_up_scheduler_job(self):
         scheduler_job_id = f"user_{self.id}_scheduler"
@@ -81,14 +81,13 @@ class User(BaseModel):
 
         logger.debug(f"{self.scheduler_job_id} was rescheduled to {self.time_to_ask}")
 
-
     def remove_scheduler_job(self):
         if self.scheduler_job_id:
             scheduler.remove_job(self.scheduler_job_id)
 
 
 class Habit(BaseModel):
-    owner: User = ForeignKeyField(User, backref="habits", on_delete='CASCADE')
+    owner: User = ForeignKeyField(User, backref="habits", on_delete="CASCADE")
     name: str = CharField()
     answer_type: str = CharField()  # 'bool' or 'integer'
     regularity: str = IntegerField()  # 3 (times a week)

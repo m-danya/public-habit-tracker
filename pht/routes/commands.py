@@ -20,7 +20,7 @@ async def start(nav: Navigator):
     await nav.state.set_state()
     try:
         user = User.create(
-            id=nav.message.from_user.id,
+            id=nav.message.from_id,
             username=nav.message.from_user.username,
             full_name=nav.message.from_user.full_name,
         )
@@ -38,7 +38,8 @@ async def start(nav: Navigator):
 
     await nav.redirect(onboarding_1)
 
-@dp.message_handler(commands=["remove"], state="*")
+
+@dp.message_handler(commands=["delete_me"], state="*")
 @with_navigator
 async def remove(nav: Navigator):
     User.delete().where(User.id == nav.user_id).execute()
