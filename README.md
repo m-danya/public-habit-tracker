@@ -8,7 +8,23 @@ Telegram bot for habit tracking with collaboration features.
 
 ### Via Docker
 
-TBD
+Credentials for Telegram API, Postgresql and Redis are stored in the `.env` file.
+There is an almost ready file called `.env.compose` for running via Docker,
+which contains all necessary variables, except for the `BOT_TOKEN`. Just copy
+the sample file:
+
+```bash
+cp .env.compose .env
+```
+
+Then fill in the `BOT_TOKEN` value with your bot token, that can be obtained
+from [BotFather](https://t.me/BotFather).
+
+To run the bot with Postgresql and Redis, run:
+
+```
+sudo docker-compose up
+```
 
 ### Locally
 
@@ -32,11 +48,12 @@ docker start pht-redis pht-db
 ```
 
 Credentials for Telegram API, Postgresql and Redis are stored in the `.env`
-file. There is an almost ready file called `.env.sample`, which contains all
-necessary variables, except for the `BOT_TOKEN`. Just copy the sample file:
+file. There is an almost ready file called `.env.local` to run bot locally,
+which contains all necessary variables, except for the `BOT_TOKEN`. Just copy
+the sample file:
 
 ```bash
-cp .env.example .env
+cp .env.local .env
 ```
 
 Then fill in the `BOT_TOKEN` value with your bot token, that can be obtained
@@ -71,5 +88,4 @@ your code with it before submitting a PR. You can easily set up a file
 watcher in your IDE to format the code with `black` every time you save a file.
 
 ### TODO
-- Dockerfile
 - GH actions: black, flake8, (pytest?)

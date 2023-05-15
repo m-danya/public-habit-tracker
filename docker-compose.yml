@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+    pht-db:
+        image: postgres:latest
+        expose:
+            - "5432"
+        environment:
+            - POSTGRES_DB=pht-db
+            - POSTGRES_PASSWORD=postgres
+
+    pht-redis:
+        image: redis/redis-stack-server:latest
+        expose:
+            - "6379"
+
+    pht-bot:
+        build: .
+        volumes:
+            - .:/pht-bot/src
+        depends_on: [pht-db, pht-redis]
