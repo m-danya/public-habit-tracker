@@ -14,10 +14,11 @@ which contains all necessary variables, except for the `BOT_TOKEN`. Just copy
 the sample file:
 
 ```bash
-cp .env.compose .env
+cp .env.example .env
 ```
 
-Then fill in the `BOT_TOKEN` value with your bot token, that can be obtained
+Then you need to change host addresses from `0.0.0.0` to `pht-redis` and `pht-db`
+respectively and fill in the `BOT_TOKEN` value with your bot token, that can be obtained
 from [BotFather](https://t.me/BotFather).
 
 To run the bot with Postgresql and Redis, run:
@@ -36,7 +37,7 @@ You also need Postgresql and Redis to run the bot. You can create Docker
 containers with them with these commands:
 
 ```bash
-docker run -p 5433:5432 --name pht-db -e POSTGRES_DB=pht-db -e POSTGRES_PASSWORD=postgres -d postgres
+docker run -p 5432:5432 --name pht-db -e POSTGRES_DB=pht-db -e POSTGRES_PASSWORD=postgres -d postgres
 docker run -d --name pht-redis -p 6379:6379 redis/redis-stack-server:latest
 ```
 
