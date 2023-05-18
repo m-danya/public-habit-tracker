@@ -54,7 +54,7 @@ which contains all necessary variables, except for the `BOT_TOKEN`. Just copy
 the sample file:
 
 ```bash
-cp .env.local .env
+cp .env.example .env
 ```
 
 Then fill in the `BOT_TOKEN` value with your bot token, that can be obtained
