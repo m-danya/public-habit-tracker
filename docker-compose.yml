@@ -8,14 +8,24 @@ services:
         environment:
             - POSTGRES_DB=pht-db
             - POSTGRES_PASSWORD=postgres
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
 
     pht-redis:
         image: redis/redis-stack-server:latest
         expose:
             - "6379"
+        volumes:
+            - pht-redis-volume:/data
+        command: 'redis-server --save "60 1" --appendonly yes --protected-mode "no"'
 
     pht-bot:
         build: .
         volumes:
             - .:/pht-bot/src
         depends_on: [pht-db, pht-redis]
+volumes:
+    pht-redis-volume:
