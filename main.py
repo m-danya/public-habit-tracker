@@ -19,4 +19,5 @@ logger.add(sys.stdout, colorize=True, backtrace=True, diagnose=True)
 
 if __name__ == "__main__":
     scheduler.start()
+    logger.info("Starting a bot")
     executor.start_polling(dp, skip_updates=True)
