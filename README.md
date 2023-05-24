@@ -9,7 +9,7 @@ Telegram bot for habit tracking with collaboration features.
 ### Via Docker
 
 Credentials for Telegram API, Postgresql and Redis are stored in the `.env` file.
-There is an almost ready file called `.env.example` for running via Docker,
+There is an almost ready file called `.env.example` for running the bot,
 which contains all necessary variables, except for the `BOT_TOKEN`. Just copy
 the sample file:
 
@@ -27,7 +27,7 @@ To run the bot with Postgresql and Redis, run:
 sudo docker-compose up
 ```
 
-### Locally
+### Locally (useful for development)
 
 Prerequisites:
 - Python 3.10
@@ -49,7 +49,7 @@ docker start pht-redis pht-db
 ```
 
 Credentials for Telegram API, Postgresql and Redis are stored in the `.env`
-file. There is an almost ready file called `.env.example` to run bot locally,
+file. There is an almost ready file called `.env.example` to run the bot,
 which contains all necessary variables, except for the `BOT_TOKEN`. Just copy
 the sample file:
 

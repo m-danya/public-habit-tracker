@@ -24,8 +24,7 @@ services:
 
     pht-bot:
         build: .
-        volumes:
-            - .:/pht-bot/src
         depends_on: [pht-db, pht-redis]
+
 volumes:
     pht-redis-volume:
