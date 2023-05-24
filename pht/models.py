@@ -49,7 +49,7 @@ class User(BaseModel):
     def _get_cron_trigger(self):
         hours, minutes = self.time_to_ask.split(":")
         # FIXME: development/debugging purposes only
-        return IntervalTrigger(seconds=10)
+        # return IntervalTrigger(seconds=10)
         # every day at hh:mm
         return CronTrigger(hour=hours, minute=minutes)
 
@@ -92,6 +92,10 @@ class Habit(BaseModel):
 
     def __str__(self):
         return self.__repr__()
+
+    def get_recent_answers(self):
+        # FIXME: in progress
+        return self.answers
 
 
 class Answer(BaseModel):

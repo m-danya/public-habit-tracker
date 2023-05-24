@@ -13,6 +13,7 @@ TBD
 ### Locally
 
 Prerequisites:
+
 - Python 3.10
 - [Poetry](https://python-poetry.org/docs/)
 
@@ -70,6 +71,14 @@ This project uses [black](https://github.com/psf/black),
 your code with it before submitting a PR. You can easily set up a file
 watcher in your IDE to format the code with `black` every time you save a file.
 
+A useful command for recreating the database:
+
+```
+# this command will DROP ALL DATA from the db
+docker exec -it pht-db /bin/bash -c "dropdb -f -U postgres pht-db; createdb -U postgres pht-db"
+```
+
 ### TODO
+
 - Dockerfile
 - GH actions: black, flake8, (pytest?)

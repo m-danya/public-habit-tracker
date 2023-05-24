@@ -1,3 +1,4 @@
+import random
 from pht.utils import gen_keyboard
 
 
@@ -40,7 +41,7 @@ class Texts:
         "Если бот заблудился, нажми /menu и сообщи о произошедшем @m\\_danya\\_jpg"
     )
     something_went_wrong = (
-        "Что\\-то пошло не так, пожалуйста, напиши об этом @m\\_danya\\_jpg"
+        "Что\\-то пошло не так\!\n\nПожалуйста, напиши об этом @m\\_danya\\_jpg"
     )
 
     @staticmethod
@@ -52,9 +53,25 @@ class Texts:
         ]
         return header + "\n\n" + "\n".join(habits)
 
+    greeting = [
+        "Привет, как дела?",
+        "Привет, как успехи?",
+        "Привет!",
+        "Здравствуй!",
+        "Здравствуй! Как дела?",
+        "Привет!",
+    ]
+
     @staticmethod
-    def ask_about_day(n):
-        return f"""Привет! <цепочка вопросов про n={n} привычек>"""
+    def ask_about_day_intro(*args, **kwargs):
+        return f"""{random.choice(Texts.greeting)} Посмотрим на твой прогресс:
+
+        <список привычек с эмодзи по дням недели>
+        """
+
+    @staticmethod
+    def ask_about_day_main(*args, **kwargs):
+        return f"""Давай внесём результаты за сегодня:"""
 
     add_new_habit_intro_text = (
         "Отлично! Я спрошу тебя о нескольких вещах:\n\n"

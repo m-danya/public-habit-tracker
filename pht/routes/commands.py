@@ -4,6 +4,7 @@ from peewee import IntegrityError
 from pht.bot import dp
 from pht.models import User
 from pht.navigator import Navigator, with_navigator
+from pht.scheduler_jobs import ask_about_day_job
 
 
 @dp.message_handler(commands=["menu"], state="*")
@@ -34,3 +35,9 @@ async def start(nav: Navigator):
     from pht.routes.onboarding import onboarding_1
 
     await nav.redirect(onboarding_1)
+
+
+@dp.message_handler(commands=["ask_me"], state="*")
+@with_navigator
+async def ask_me(nav: Navigator):
+    await ask_about_day_job(nav.user_id)
