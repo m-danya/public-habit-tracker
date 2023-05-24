@@ -8,9 +8,26 @@ Telegram bot for habit tracking with collaboration features.
 
 ### Via Docker
 
-TBD
+Credentials for Telegram API, Postgresql and Redis are stored in the `.env` file.
+There is an almost ready file called `.env.example` for running the bot,
+which contains all necessary variables, except for the `BOT_TOKEN`. Just copy
+the sample file:
 
-### Locally
+```bash
+cp .env.example .env
+```
+
+Then you need to change host addresses from `0.0.0.0` to `pht-redis` and `pht-db`
+respectively and fill in the `BOT_TOKEN` value with your bot token, that can be obtained
+from [BotFather](https://t.me/BotFather).
+
+To run the bot with Postgresql and Redis, run:
+
+```
+sudo docker-compose up
+```
+
+### Locally (useful for development)
 
 Prerequisites:
 
@@ -21,7 +38,7 @@ You also need Postgresql and Redis to run the bot. You can create Docker
 containers with them with these commands:
 
 ```bash
-docker run -p 5433:5432 --name pht-db -e POSTGRES_DB=pht-db -e POSTGRES_PASSWORD=postgres -d postgres
+docker run -p 5432:5432 --name pht-db -e POSTGRES_DB=pht-db -e POSTGRES_PASSWORD=postgres -d postgres
 docker run -d --name pht-redis -p 6379:6379 redis/redis-stack-server:latest
 ```
 
@@ -33,8 +50,9 @@ docker start pht-redis pht-db
 ```
 
 Credentials for Telegram API, Postgresql and Redis are stored in the `.env`
-file. There is an almost ready file called `.env.sample`, which contains all
-necessary variables, except for the `BOT_TOKEN`. Just copy the sample file:
+file. There is an almost ready file called `.env.example` to run the bot,
+which contains all necessary variables, except for the `BOT_TOKEN`. Just copy
+the sample file:
 
 ```bash
 cp .env.example .env
@@ -80,5 +98,4 @@ docker exec -it pht-db /bin/bash -c "dropdb -f -U postgres pht-db; createdb -U p
 
 ### TODO
 
-- Dockerfile
 - GH actions: black, flake8, (pytest?)

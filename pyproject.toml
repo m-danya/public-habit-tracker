@@ -2,10 +2,9 @@
 name = "public-habit-tracker"
 version = "0.1.0"
 description = "Telegram bot for habit tracking with collaboration features"
-authors = ["m-danya <danila-mikh@ya.ru>"]
+authors = ["m-danya <danila-mikh@ya.ru>", "kobrineli <kobrineli@ispras.ru>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "pht"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
