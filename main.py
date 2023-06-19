@@ -9,7 +9,7 @@ import pht.routes.commands  # noqa, must be at the beginning
 import pht.routes.onboarding  # noqa
 import pht.routes.my_habits  # noqa
 import pht.routes.add_new_habit  # noqa
-import pht.scheduler_jobs  # noqa, contains routes for callbacks
+import pht.ask_about_day  # noqa
 import pht.routes.settings
 import pht.routes.menu  # noqa, must be imported by the last of routes
 

@@ -91,9 +91,15 @@ class Texts:
         *Список привычек с эмодзи по дням недели*
         """
 
-    @staticmethod
-    def ask_about_day_main(*args, **kwargs):
-        return f"""Давай внесём результаты за сегодня:"""
+    ask_about_day_main = "Давай внесём результаты за сегодня:"
+
+    def ask_about_day_integer_input_text(habit):
+        return f"<b>{habit.name}</b>\n\nСколько минут удалось уделить этой привычке?"
+
+    invalid_integer_input = "Некорректное значение, попробуй ещё раз"
+
+    submit_button = "Сохранить"
+    day_submitted = "Принято!"
 
     add_new_habit_intro_text = (
         "Отлично! Я спрошу тебя о нескольких вещах:\n\n"
@@ -164,3 +170,11 @@ class States:
     settings = "settings"
     settings_waiting_for_time = "settings_waiting_for_time"
     settings_waiting_for_rating = "settings_waiting_for_rating"
+
+    ask_about_day_main = "ask_about_day_main"
+    ask_about_day_integer_input = "ask_about_day_integer_input"
+
+
+class IntegerInputRequired(Exception):
+    # TODO: write a description
+    pass

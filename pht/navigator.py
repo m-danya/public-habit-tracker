@@ -30,7 +30,7 @@ class Navigator:
         elif call:
             self.call = call
             self.message = self.call.message
-            self.user_id = self.message.chat.id
+            self.user_id = self.call.from_user.id
             self.state = state
             self.callback_data = callback_data
         else:
@@ -45,6 +45,7 @@ class Navigator:
         )
 
     async def redirect(self, another_route_function):
+        # Note: can't redirect from callback to message
         return await another_route_function(self.message, self.state)
 
 

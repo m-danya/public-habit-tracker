@@ -4,7 +4,7 @@ from peewee import IntegrityError
 from pht.bot import dp
 from pht.models import User
 from pht.navigator import Navigator, with_navigator
-from pht.scheduler_jobs import ask_about_day_job
+from pht.ask_about_day import ask_about_day_job
 
 
 @dp.message_handler(commands=["menu"], state="*")
