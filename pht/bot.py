@@ -7,7 +7,7 @@ from bestconfig import Config
 from pytz import utc
 
 config = Config()
-bot = Bot(token=config.BOT_TOKEN, parse_mode=aiogram.types.ParseMode.MARKDOWN_V2)
+bot = Bot(token=config.BOT_TOKEN, parse_mode=aiogram.types.ParseMode.HTML)
 storage = RedisStorage2(
     config.REDIS_HOST, port=config.REDIS_PORT, password=config.REDIS_PASSWORD, db=8
 )
