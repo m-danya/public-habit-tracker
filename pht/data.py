@@ -1,8 +1,13 @@
 import random
-from pht.utils import gen_keyboard
 from datetime import date, datetime, time, timedelta
 
-from pht.utils import gen_keyboard, to_msc_time
+from pht.utils import (
+    days_left_till_sunday,
+    gen_keyboard,
+    get_nearest_monday,
+    to_msc_time,
+    today,
+)
 
 
 SCHEDULER_FORGET_IF_MISSED_SECONDS = 60 * 120
@@ -47,6 +52,12 @@ class Texts:
         "Что-то пошло не так!\n\nПожалуйста, напиши об этом @m_danya_jpg"
     )
 
+    change_past_text = (
+        "Здесь ты можешь внести информацию о прошлом дне, если понял, что внёс что-то не так.\n\n"
+        'За какой день ты хочешь изменить информацию о привычках? Пришли ответ в формате "дд.мм.гггг", '
+        'например, "31.12.2022"'
+    )
+
     time_setting_button = "🕒 Время опроса"
     rating_setting_button = "🏆 Участие в рейтинге"
 
@@ -54,13 +65,32 @@ class Texts:
     set_rating_text = "🏅 Ты будешь участвовать в публичном рейтинге?"
 
     @staticmethod
-    def my_habits_text(habits: ...):
+    def my_habits_text(habits):
         header = "<b>Твои привычки:</b>"
-        habits = [
-            "- <b>Заниматься спортом</b>: два раза в неделю",
-            "- <b>Не есть сладкое после ужина</b>: каждый день",
+        habit_texts = [
+            f"- {habit.type_emoji} <b>{habit.name}</b>: {Texts.regularity_to_text[habit.regularity]}"
+            for habit in habits
         ]
-        return header + "\n\n" + "\n".join(habits)
+        return header + "\n\n" + "\n".join(habit_texts)
+
+    @staticmethod
+    def habits_with_emojis(habits):
+        def _get_emojis(habit):
+            from_date = get_nearest_monday(today())
+            n_days = 7 - days_left_till_sunday(today())
+            return "".join(
+                habit.get_status_for_day(
+                    from_date + timedelta(days=day_n), empty_emoji="⏸️"
+                ).emoji
+                for day_n in range(n_days)
+            )
+
+        return "\n".join(
+            [
+                f"- {habit.type_emoji} <b>{habit.name}</b>: {_get_emojis(habit)}"
+                for habit in habits
+            ]
+        )
 
     greeting = [
         "Привет, как дела?",
@@ -73,7 +103,7 @@ class Texts:
 
     @staticmethod
     def settings_text(time_to_ask, rating_publicity):
-        header = "<b>Твои настройки:<b>"
+        header = "<b>Твои настройки:</b>"
 
         time_str = f"{time.strftime(to_msc_time(time_to_ask), '%H:%M')}"
         rating_str = "да" if rating_publicity else "нет"
@@ -85,21 +115,38 @@ class Texts:
         return header + "\n\n" + "\n".join(settings)
 
     @staticmethod
-    def ask_about_day_intro(*args, **kwargs):
-        return f"""{random.choice(Texts.greeting)} Посмотрим на твой прогресс:
+    def ask_about_day_intro(habits):
+        return f"{random.choice(Texts.greeting)} Посмотрим на твой прогресс на этой неделе:\n\n{Texts.habits_with_emojis(habits)}"
 
-        *Список привычек с эмодзи по дням недели*
-        """
+    @staticmethod
+    def ask_about_day_main(day: date):
+        return f"Давай внесём результаты за {Texts.date_to_text(day)}:"
 
-    ask_about_day_main = "Давай внесём результаты за сегодня:"
-
+    @staticmethod
     def ask_about_day_integer_input_text(habit):
         return f"<b>{habit.name}</b>\n\nСколько минут удалось уделить этой привычке?"
 
-    invalid_integer_input = "Некорректное значение, попробуй ещё раз"
+    # it is used in at least 2 places, be careful when changing
+    invalid_any_value = "Некорректное значение, попробуй ещё раз"
 
     submit_button = "Сохранить"
     day_submitted = "Принято!"
+
+    regularity_to_text = {
+        1: "1 раз в неделю",
+        2: "2 раза в неделю",
+        3: "3 раза в неделю",
+        4: "4 раза в неделю",
+        5: "5 раз в неделю",
+        6: "6 раз в неделю",
+        7: "каждый день",
+    }
+
+    def date_to_text(day: date):
+        if day == today():
+            return "сегодня"
+        else:
+            return day.strftime("%d.%m")
 
     add_new_habit_intro_text = (
         "Отлично! Я спрошу тебя о нескольких вещах:\n\n"
@@ -173,6 +220,8 @@ class States:
 
     ask_about_day_main = "ask_about_day_main"
     ask_about_day_integer_input = "ask_about_day_integer_input"
+
+    change_past_waiting_for_date = "change_past_waiting_for_date"
 
 
 class IntegerInputRequired(Exception):

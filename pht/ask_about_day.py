@@ -32,17 +32,24 @@ finish_callback = CallbackData("finish")
 
 async def ask_about_day_job(user_id):
     nav = Navigator(user_id=user_id)
+    await ask_about_day(nav, today())
+
+
+async def ask_about_day(nav: Navigator, day: date):
     await nav.state.set_state(States.ask_about_day_main)
     await nav.send_message(
-        Texts.ask_about_day_intro(), reply_markup=Keyboards.no_buttons
+        Texts.ask_about_day_intro(nav.user.habits), reply_markup=Keyboards.no_buttons
     )
-    await nav.send_message(**await get_asking_message_content(nav, today()))
+    await nav.send_message(**await get_asking_message_content(nav, day))
 
 
 async def get_asking_message_content(nav: Navigator, day: date):
     buttons = []
     for habit in nav.user.habits:
         habit_status = habit.get_status_for_day(day)
+        if not habit_status.emoji:
+            # There was no such habit at that day
+            continue
         button_text = f"{habit_status.emoji} {habit.name}"
         if habit.answer_type == "integer" and habit_status.value:
             button_text += f" ({habit_status.value} мин)"
@@ -62,7 +69,7 @@ async def get_asking_message_content(nav: Navigator, day: date):
         )
     )
     return {
-        "text": Texts.ask_about_day_main,
+        "text": Texts.ask_about_day_main(day),
         "keyboard": InlineKeyboardMarkup(
             inline_keyboard=[[button] for button in buttons]
         ),
@@ -118,7 +125,7 @@ async def integer_input_function(nav: Navigator):
             raise ValueError
         Answer.set_integer_value(habit, day, value)
     except ValueError:
-        await nav.send_message(Texts.invalid_integer_input)
+        await nav.send_message(Texts.invalid_any_value)
         return
     await nav.state.set_state(States.ask_about_day_main)
     await nav.send_message(**await get_asking_message_content(nav, day))

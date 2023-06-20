@@ -9,9 +9,9 @@ from pht.utils import match_text
 @dp.message_handler(match_text(Texts.question_button))
 @with_navigator
 async def what_to_do(nav: Navigator):
-    from pht.routes.onboarding import start
+    from pht.routes.onboarding import onboarding_1
 
-    await nav.redirect(start)
+    await nav.redirect(onboarding_1)
 
 
 @dp.message_handler(state="*")

@@ -33,6 +33,7 @@ class BaseModel(Model):
 
 class User(BaseModel):
     # id, the primary key, is equal to `message.from_id`
+    id: str = CharField(primary_key=True)
     username: str = CharField()
     full_name: str = CharField()
     created_at: datetime = DateTimeField(default=ts_default)
@@ -101,7 +102,7 @@ class Habit(BaseModel):
     owner: User = ForeignKeyField(User, backref="habits", on_delete="CASCADE")
     name: str = CharField()
     answer_type: str = CharField()  # 'bool' or 'integer'
-    regularity: str = IntegerField()  # 3 (times a week)
+    regularity: int = IntegerField()  # 3 (times a week)
     created_at: datetime = DateTimeField(default=ts_default)
 
     def __repr__(self):
@@ -110,7 +111,7 @@ class Habit(BaseModel):
     def __str__(self):
         return self.__repr__()
 
-    def get_status_for_day(self, day: date) -> HabitStatus:
+    def get_status_for_day(self, day: date, empty_emoji="") -> HabitStatus:
         """
         Retuns a status for a given day.
 
@@ -122,8 +123,8 @@ class Habit(BaseModel):
 
         Day can be arbitrary, from any week, not just current.
         """
-        if self.created_at.date() < day:
-            return ""
+        if day < self.created_at.date():
+            return HabitStatus(empty_emoji, 0)
         answer = Answer.get_or_none(habit=self, date=day)
         if answer and answer.value:
             return HabitStatus("✅", answer.value)
@@ -139,6 +140,10 @@ class Habit(BaseModel):
             return HabitStatus("❎", 0)
         else:
             return HabitStatus("❌", 0)
+
+    @property
+    def type_emoji(self):
+        return "⏱️" if self.answer_type == "integer" else "🎯"
 
 
 class Answer(BaseModel):
