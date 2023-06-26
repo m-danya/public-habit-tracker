@@ -71,19 +71,21 @@ class Texts:
             f"- {habit.type_emoji} <b>{habit.name}</b>: {Texts.regularity_to_text[habit.regularity]}"
             for habit in habits
         ]
-        return header + "\n\n" + "\n".join(habit_texts)
+        return header + "\n\n" + "\n\n".join(habit_texts)
 
     @staticmethod
     def habits_with_emojis(habits):
         def _get_emojis(habit):
             from_date = get_nearest_monday(today())
             n_days = 7 - days_left_till_sunday(today())
-            return "".join(
-                habit.get_status_for_day(
+            emojis = ""
+            for day_n in range(n_days):
+                emojis += habit.get_status_for_day(
                     from_date + timedelta(days=day_n), empty_emoji="⏸️"
                 ).emoji
-                for day_n in range(n_days)
-            )
+            # replace today's emoji with a thinking face to avoid updating text
+            # of this message every time a user toggles it (that causes shaking)
+            return emojis[:-1] + "🤔"
 
         return "\n".join(
             [

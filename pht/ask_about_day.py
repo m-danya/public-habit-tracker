@@ -37,9 +37,12 @@ async def ask_about_day_job(user_id):
 
 async def ask_about_day(nav: Navigator, day: date):
     await nav.state.set_state(States.ask_about_day_main)
-    await nav.send_message(
-        Texts.ask_about_day_intro(nav.user.habits), reply_markup=Keyboards.no_buttons
-    )
+    if day == today():
+        # do not show week stats if user edits some other day
+        await nav.send_message(
+            Texts.ask_about_day_intro(nav.user.habits),
+            reply_markup=Keyboards.no_buttons,
+        )
     await nav.send_message(**await get_asking_message_content(nav, day))
 
 
@@ -59,6 +62,7 @@ async def get_asking_message_content(nav: Navigator, day: date):
                 # CallbackData does not support datetime.date => store `day`
                 # as a number of days since 01.01.01 (`.toordinal()`)
                 callback_data=habit_toggle_callback.new(habit.id, day.toordinal()),
+                reply_markup=Keyboards.no_buttons,
             )
         )
 

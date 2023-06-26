@@ -45,6 +45,7 @@ async def change_past_got_input(nav: Navigator):
     value = nav.message.text
     if value == Texts.back_button:
         await nav.redirect(my_habits)
+        return
     try:
         day = datetime.strptime(value, "%d.%m.%Y").date()
         from pht.ask_about_day import ask_about_day
