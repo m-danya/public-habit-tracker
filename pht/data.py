@@ -87,7 +87,7 @@ class Texts:
 
         return "\n".join(
             [
-                f"- {habit.type_emoji} <b>{habit.name}</b>: {_get_emojis(habit)}"
+                f"- {habit.type_emoji} <b>{habit.name}</b>:\n\n{_get_emojis(habit)}\n"
                 for habit in habits
             ]
         )
@@ -225,5 +225,14 @@ class States:
 
 
 class IntegerInputRequired(Exception):
-    # TODO: write a description
+    """
+    Exception for toggle_callback
+
+    It is raised when user toggles a habit with integer value from zero-value to
+    non-zero. At this situation, an integer value is required from user.
+
+    This exception is not an error, it just helps to handle the situation more
+    easily that a bunch of "if"s.
+    """
+
     pass

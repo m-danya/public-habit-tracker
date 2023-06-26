@@ -95,12 +95,3 @@ A useful command for recreating the database:
 # this command will DROP ALL DATA from the db
 docker exec -it pht-db /bin/bash -c "dropdb -f -U postgres pht-db; createdb -U postgres pht-db"
 ```
-
-### TODO
-
-- вторая часть анбординга про важность привычек
-- триггер/действие/награда: теория и примеры (прям вносить в привычку можно
-  чтобы было)
-- просмотр ранее внесенных взаимодействий
-- публичный рейтинг
-- GH actions: black, flake8
