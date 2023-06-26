@@ -13,7 +13,8 @@ services:
             interval: 5s
             timeout: 5s
             retries: 5
-
+        volumes:
+            - pht-postgres-volume:/var/lib/postgresql/data
     pht-redis:
         image: redis/redis-stack-server:latest
         expose:
@@ -28,3 +29,4 @@ services:
 
 volumes:
     pht-redis-volume:
+    pht-postgres-volume:
