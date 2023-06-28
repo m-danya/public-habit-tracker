@@ -28,6 +28,6 @@ if __name__ == "__main__":
         if not user.scheduler_job_exists():
             user.set_up_scheduler_job()
             logger.warning(
-                "Scheduler job for {user} was not found. It was set up again."
+                f"Scheduler job for {user} was not found. It was set up again."
             )
     executor.start_polling(dp, skip_updates=True)
