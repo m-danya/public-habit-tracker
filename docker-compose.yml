@@ -16,12 +16,14 @@ services:
         volumes:
             - pht-postgres-volume:/var/lib/postgresql/data
     pht-redis:
-        image: redis/redis-stack-server:latest
+        image: redis
         expose:
             - "6379"
         volumes:
             - pht-redis-volume:/data
-        command: 'redis-server --save "60 1" --appendonly yes --protected-mode "no"'
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+        command: >
+            --include /usr/local/etc/redis/redis.conf
 
     pht-bot:
         build: .

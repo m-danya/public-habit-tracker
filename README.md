@@ -39,7 +39,7 @@ containers with them with these commands:
 
 ```bash
 docker run -p 5432:5432 --name pht-db -e POSTGRES_DB=pht-db -e POSTGRES_PASSWORD=postgres -d postgres
-docker run -d --name pht-redis -p 6379:6379 redis/redis-stack-server:latest
+docker run -d --name pht-redis -p 6379:6379 redis # Note: no persistence here
 ```
 
 After creating containers, you can always start them like this (e.g. after

@@ -90,6 +90,9 @@ class User(BaseModel):
         if self.scheduler_job_id:
             scheduler.remove_job(self.scheduler_job_id)
 
+    def scheduler_job_exists(self) -> bool:
+        return scheduler.get_job(self.scheduler_job_id) is not None
+
 
 @dataclass
 class HabitStatus:
