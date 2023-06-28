@@ -5,7 +5,6 @@ from typing import Optional
 
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
-from apscheduler.jobstores.base import JobLookupError
 from peewee import *
 from playhouse.pool import PooledPostgresqlExtDatabase
 from playhouse.postgres_ext import JSONField
@@ -81,17 +80,10 @@ class User(BaseModel):
         """
         This method should be called when `User.time_to_ask` is changed
         """
-        try:
-            scheduler.reschedule_job(
-                self.scheduler_job_id, trigger=self._get_cron_trigger()
-            )
+        scheduler.reschedule_job(
+            self.scheduler_job_id, trigger=self._get_cron_trigger()
+        )
 
-        except JobLookupError:
-            self.set_up_scheduler_job()
-            logger.error(
-                f"Couldn't find a scheduler job for {self} while trying to reschedule it.\n\n"
-                "Scheduler job was set up successfully, but something definitely went wrong."
-            )
         logger.debug(f"{self.scheduler_job_id} was rescheduled to {self.time_to_ask}")
 
     def remove_scheduler_job(self):
