@@ -75,17 +75,16 @@ class Texts:
 
     @staticmethod
     def habits_with_emojis(habits):
+        # this thing is shown only if asking for today's results
         def _get_emojis(habit):
-            from_date = get_nearest_monday(today())
-            n_days = 7 - days_left_till_sunday(today())
             emojis = ""
-            for day_n in range(n_days):
-                emojis += habit.get_status_for_day(
-                    from_date + timedelta(days=day_n), empty_emoji="⏸️"
-                ).emoji
-            # replace today's emoji with a thinking face to avoid updating text
-            # of this message every time a user toggles it (that causes shaking)
-            return emojis[:-1] + "🤔"
+            day = get_nearest_monday(today())
+            while day != today():
+                emojis += habit.get_status_for_day(day, empty_emoji="⏸️").emoji
+                day += timedelta(days=1)
+            # show today's emoji as a thinking face to avoid updating text of
+            # this message every time a user toggles it (that causes shaking)
+            return emojis + "🤔"
 
         return "\n".join(
             [

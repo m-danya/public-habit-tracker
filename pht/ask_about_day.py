@@ -57,26 +57,28 @@ async def get_asking_message_content(nav: Navigator, day: date):
         if habit.answer_type == "integer" and habit_status.value:
             button_text += f" ({habit_status.value} мин)"
         buttons.append(
-            InlineKeyboardButton(
-                text=button_text,
-                # CallbackData does not support datetime.date => store `day`
-                # as a number of days since 01.01.01 (`.toordinal()`)
-                callback_data=habit_toggle_callback.new(habit.id, day.toordinal()),
-                reply_markup=Keyboards.no_buttons,
-            )
+            [
+                InlineKeyboardButton(
+                    text=button_text,
+                    # CallbackData does not support datetime.date => store `day`
+                    # as a number of days since 01.01.01 (`.toordinal()`)
+                    callback_data=habit_toggle_callback.new(habit.id, day.toordinal()),
+                    reply_markup=Keyboards.no_buttons,
+                )
+            ]
         )
 
     buttons.append(
-        InlineKeyboardButton(
-            text=Texts.submit_button,
-            callback_data=finish_callback.new(),
-        )
+        [
+            InlineKeyboardButton(
+                text=Texts.submit_button,
+                callback_data=finish_callback.new(),
+            )
+        ]
     )
     return {
         "text": Texts.ask_about_day_main(day),
-        "keyboard": InlineKeyboardMarkup(
-            inline_keyboard=[[button] for button in buttons]
-        ),
+        "keyboard": InlineKeyboardMarkup(inline_keyboard=buttons),
     }
 
 
