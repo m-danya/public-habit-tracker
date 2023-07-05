@@ -49,9 +49,9 @@ async def add_new_habit_check_type_and_finish(nav: Navigator):
     answer_type_input = nav.message.text
     match answer_type_input:
         case Texts.add_new_habit_button_yes_no:
-            answer_type = "yes or no"
+            answer_type = "bool"
         case Texts.add_new_habit_button_minutes:
-            answer_type = "minutes"
+            answer_type = "integer"
         case _:
             await nav.send_message(Texts.invalid_text_input)
             return

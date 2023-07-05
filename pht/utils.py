@@ -9,10 +9,6 @@ async def send_message(user_id, text, *args, keyboard=None, **kwargs):
     A wrapper for `aiogram.Bot.send_message` with extra functionality
     """
 
-    # escape symbols that are special in Markdown
-    chars_to_escape = "!<>.-()+="
-    for char in chars_to_escape:
-        text = text.replace(char, "\\" + char)
     if keyboard:
         kwargs["reply_markup"] = keyboard
     return await bot.send_message(user_id, text, *args, **kwargs)
@@ -37,3 +33,19 @@ def to_utc_time(time_msc):
 
 def to_msc_time(time_utc):
     return (datetime.combine(date.today(), time_utc) + timedelta(hours=3)).time()
+
+
+def get_nearest_monday(date: date):
+    return date - timedelta(days=date.weekday())
+
+
+def get_nearest_sunday(date: date):
+    return date + timedelta(days=6 - date.weekday())
+
+
+def days_left_till_sunday(date: date):
+    return 6 - date.weekday()
+
+
+def today() -> date:
+    return datetime.utcnow().date()

@@ -30,6 +30,7 @@ sudo docker-compose up
 ### Locally (useful for development)
 
 Prerequisites:
+
 - Python 3.10
 - [Poetry](https://python-poetry.org/docs/)
 
@@ -38,7 +39,7 @@ containers with them with these commands:
 
 ```bash
 docker run -p 5432:5432 --name pht-db -e POSTGRES_DB=pht-db -e POSTGRES_PASSWORD=postgres -d postgres
-docker run -d --name pht-redis -p 6379:6379 redis/redis-stack-server:latest
+docker run -d --name pht-redis -p 6379:6379 redis # Note: no persistence here
 ```
 
 After creating containers, you can always start them like this (e.g. after
@@ -88,5 +89,9 @@ This project uses [black](https://github.com/psf/black),
 your code with it before submitting a PR. You can easily set up a file
 watcher in your IDE to format the code with `black` every time you save a file.
 
-### TODO
-- GH actions: black, flake8, (pytest?)
+A useful command for recreating the database:
+
+```
+# this command will DROP ALL DATA from the db
+docker exec -it pht-db /bin/bash -c "dropdb -f -U postgres pht-db; createdb -U postgres pht-db"
+```
