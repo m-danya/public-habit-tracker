@@ -37,7 +37,7 @@ async def ask_about_day_job(user_id):
 
 async def ask_about_day(nav: Navigator, day: date):
     await nav.state.set_state(States.ask_about_day_main)
-    state = nav.state.get_state()
+    state = await nav.state.get_state()
     await nav.send_message(
         f"[debug] Текущий state — {state} (должен быть {States.ask_about_day_main})"
     )
