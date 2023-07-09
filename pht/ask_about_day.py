@@ -37,6 +37,10 @@ async def ask_about_day_job(user_id):
 
 async def ask_about_day(nav: Navigator, day: date):
     await nav.state.set_state(States.ask_about_day_main)
+    state = nav.state.get_state()
+    nav.send_message(
+        f"[debug] Текущий state — {state} (должен быть {States.ask_about_day_main})"
+    )
     if day == today():
         # do not show week stats if user edits some other day
         await nav.send_message(
@@ -77,7 +81,7 @@ async def get_asking_message_content(nav: Navigator, day: date):
         ]
     )
     return {
-        "text": Texts.ask_about_day_main(day),
+        "text": Texts.ask_about_day_main_text(day),
         "keyboard": InlineKeyboardMarkup(inline_keyboard=buttons),
     }
 

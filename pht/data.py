@@ -120,7 +120,7 @@ class Texts:
         return f"{random.choice(Texts.greeting)} Посмотрим на твой прогресс на этой неделе:\n\n{Texts.habits_with_emojis(habits)}"
 
     @staticmethod
-    def ask_about_day_main(day: date):
+    def ask_about_day_main_text(day: date):
         return f"Давай внесём результаты за {Texts.date_to_text(day)}:"
 
     @staticmethod
