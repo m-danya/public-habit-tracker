@@ -37,10 +37,6 @@ async def ask_about_day_job(user_id):
 
 async def ask_about_day(nav: Navigator, day: date):
     await nav.state.set_state(States.ask_about_day_main)
-    state = await nav.state.get_state()
-    await nav.send_message(
-        f"[debug] Текущий state — {state} (должен быть {States.ask_about_day_main})"
-    )
     if day == today():
         # do not show week stats if user edits some other day
         await nav.send_message(
@@ -60,17 +56,20 @@ async def get_asking_message_content(nav: Navigator, day: date):
         button_text = f"{habit_status.emoji} {habit.name}"
         if habit.answer_type == "integer" and habit_status.value:
             button_text += f" ({habit_status.value} мин)"
+        callback_data = habit_toggle_callback.new(habit.id, day.toordinal())
+
         buttons.append(
             [
                 InlineKeyboardButton(
                     text=button_text,
                     # CallbackData does not support datetime.date => store `day`
                     # as a number of days since 01.01.01 (`.toordinal()`)
-                    callback_data=habit_toggle_callback.new(habit.id, day.toordinal()),
+                    callback_data=callback_data,
                     reply_markup=Keyboards.no_buttons,
                 )
             ]
         )
+    await nav.send_message("[debug] callback_data для привычки = " + callback_data)
 
     buttons.append(
         [
