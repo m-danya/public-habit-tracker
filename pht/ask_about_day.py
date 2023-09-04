@@ -90,6 +90,7 @@ async def get_asking_message_content(nav: Navigator, day: date):
 )
 @with_navigator_for_callback
 async def habit_toggle_callback_function(nav: Navigator):
+    await nav.send_message("got habit_toggle_callback_function")
     habit = Habit.get_by_id(nav.callback_data["habit_id"])
     day = date.fromordinal(int(nav.callback_data["day"]))
     try:
